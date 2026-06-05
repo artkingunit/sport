@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Artem Nedzelskiy — Sports Photographer</title>
+<meta name="description" content="Sports photographer based in the Seattle area, available throughout Washington State."/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--ink:#111;--muted:#555;--faint:#999;--surface:#fff;--raised:#f5f5f5;--border:#e0e0e0;--accent:#C0392B;--serif:'Playfair Display',serif;--sans:'DM Sans',sans-serif}
+body{font-family:var(--sans);color:var(--ink);background:var(--surface)}
+nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:0.5px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:100}
+.logo{font-family:var(--serif);font-size:1.1rem;color:var(--ink)}.logo span{color:var(--accent);font-style:italic}
+.nav-links{display:flex;gap:1.5rem;list-style:none}
+.nav-links a{font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#555;text-decoration:none;cursor:pointer;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:#111}
+section{display:none}section.active{display:block}
+
+/* DESKTOP HERO */
+.home-hero{position:relative;min-height:540px;overflow:hidden;border-bottom:0.5px solid var(--border);display:flex;align-items:center}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,#fff 38%,rgba(255,255,255,0.6) 58%,transparent 75%)}
+.hero-text-over{position:relative;z-index:3;padding:3rem 2.5rem;max-width:420px}
+.kicker{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:0.9rem}
+.hero-hl{font-family:var(--serif);font-size:2.4rem;line-height:1.1;font-weight:700;margin-bottom:0.9rem}
+.hero-hl em{font-style:italic;color:#555}
+.hero-sub{font-size:14px;color:#555;line-height:1.75;margin-bottom:1.5rem}
+.btn{display:inline-block;padding:0.65rem 1.6rem;background:#111;color:#fff;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;cursor:pointer;border:none;font-family:var(--sans);transition:opacity 0.2s}
+.btn:hover{opacity:0.8}
+.btn-outline{background:transparent;color:#111;border:0.5px solid #e0e0e0}
+.hero-thumbs{position:absolute;right:0;top:0;bottom:0;z-index:1;width:62%;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,1fr);gap:3px;padding:3px}
+.ht{position:relative;overflow:hidden;background:#222}
+.ht img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease-in-out}
+.ht img.show{opacity:1}
+
+/* MOBILE HERO */
+.mobile-hero{display:none;border-bottom:0.5px solid var(--border)}
+.mobile-hero-img{width:100%;height:260px;overflow:hidden;position:relative;background:#111}
+.mobile-hero-img img{width:100%;height:100%;object-fit:cover;display:block}
+.mobile-hero-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,rgba(255,255,255,0.95))}
+.mobile-hero-text{padding:1.5rem 1.25rem 1.5rem}
+.mobile-thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;height:160px}
+.mht{position:relative;overflow:hidden;background:#222}
+.mht img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease-in-out}
+.mht img.show{opacity:1}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:0.5px solid var(--border)}
+.stat{padding:1.4rem 2rem;border-right:0.5px solid var(--border)}.stat:last-child{border-right:none}
+.stat-n{font-family:var(--serif);font-size:1.8rem;color:#111}
+.stat-l{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#555;margin-top:3px}
+
+/* CTA */
+.cta-bar{display:flex;align-items:center;justify-content:space-between;padding:1.75rem 2rem;border-bottom:0.5px solid var(--border)}
+.cta-text p:first-child{font-family:var(--serif);font-size:1.05rem}
+.cta-text p:last-child{font-size:13px;color:#555;margin-top:3px}
+.cta-btns{display:flex;gap:1rem}
+
+/* ── GALLERY: masonry, natural photo ratios, scattered ── */
+.gal-section{padding:2rem}
+.sec-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem}
+.sec-ttl{font-family:var(--serif);font-size:1.4rem}
+
+.masonry{
+  columns:4;
+  column-gap:10px;
+}
+
+.photo-card{
+  break-inside:avoid;
+  margin-bottom:10px;
+  position:relative;
+  cursor:pointer;
+  display:block;
+  background:#111;
+  transition:transform 0.4s cubic-bezier(.17,.67,.35,1.1), box-shadow 0.4s;
+  z-index:1;
+}
+
+/* random tilts — photos scattered like on a table */
+.photo-card:nth-child(7n+1){transform:rotate(-2.0deg)}
+.photo-card:nth-child(7n+2){transform:rotate(1.3deg)}
+.photo-card:nth-child(7n+3){transform:rotate(-0.7deg)}
+.photo-card:nth-child(7n+4){transform:rotate(2.1deg)}
+.photo-card:nth-child(7n+5){transform:rotate(-1.5deg)}
+.photo-card:nth-child(7n+6){transform:rotate(0.9deg)}
+.photo-card:nth-child(7n+7){transform:rotate(-1.1deg)}
+
+/* hover: straighten + scale to iPhone 17 Pro Max size */
+.photo-card:hover{
+  transform:rotate(0deg) scale(3.0) !important;
+  box-shadow:0 20px 60px rgba(0,0,0,0.55);
+  z-index:200;
+  position:relative;
+}
+/* edge-aware transform origins */
+.photo-card.el .photo-inner{transform-origin:left center}
+.photo-card.er .photo-inner{transform-origin:right center}
+.photo-card.et .photo-inner{transform-origin:center top}
+.photo-card.el.et .photo-inner{transform-origin:left top}
+.photo-card.er.et .photo-inner{transform-origin:right top}
+
+.photo-card.el:hover{transform-origin:left center}
+.photo-card.er:hover{transform-origin:right center}
+.photo-card.et:hover{transform-origin:center top}
+.photo-card.el.et:hover{transform-origin:left top}
+.photo-card.er.et:hover{transform-origin:right top}
+
+.photo-card img{
+  width:100%;
+  display:block;
+  /* NO aspect-ratio — image shows in its natural format */
+}
+
+.photo-ov{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,0.28);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 0.25s;
+}
+.photo-card:hover .photo-ov{opacity:1}
+.photo-ov i{font-size:18px;color:white}
+
+/* ── IPHONE 17 PRO MAX LIGHTBOX ── */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:none;align-items:center;justify-content:center}
+.lb.open{display:flex}
+.lb-wrap{position:relative}
+
+/* iPhone 17 Pro Max: 393px CSS width */
+.lb-phone{
+  position:relative;
+  width:393px;
+  max-width:90vw;
+  background:#0a0a0a;
+  border-radius:52px;
+  border:8px solid #2a2a2c;
+  overflow:hidden;
+  box-shadow:0 0 0 1px #3a3a3c, 0 40px 100px rgba(0,0,0,0.9);
+}
+.lb-island{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  width:126px;height:37px;background:#000;border-radius:20px;z-index:10;
+}
+.lb-screen{
+  width:100%;background:#000;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.lb-screen.portrait{aspect-ratio:9/19.5}
+.lb-screen.landscape{aspect-ratio:19.5/9}
+.lb-screen.square{aspect-ratio:1/1}
+.lb-screen img{width:100%;height:100%;object-fit:cover;display:block}
+.lb-home-bar{height:30px;background:#0a0a0a;display:flex;align-items:center;justify-content:center}
+.lb-home-indicator{width:130px;height:5px;background:rgba(255,255,255,0.3);border-radius:3px}
+
+.lb-close{position:absolute;top:-48px;right:0;color:white;background:rgba(255,255,255,0.12);border:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);color:white;background:rgba(255,255,255,0.12);border:none;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px}
+.lb-prev{left:-60px}.lb-next{right:-60px}
+.lb-counter{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:12px;color:rgba(255,255,255,0.4);white-space:nowrap;letter-spacing:0.1em}
+
+/* VIDEO */
+.vid-section{padding:2.5rem 2rem}
+.vid-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.vid-card{background:#f5f5f5;border:0.5px solid #e0e0e0;overflow:hidden}
+.vid-player{width:100%;aspect-ratio:16/9;background:#000;display:block;outline:none}
+.vid-meta{padding:1rem 1.25rem}
+.vid-type{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:4px}
+.vid-title{font-size:14px;color:#111;font-weight:500}
+.vid-note{font-size:12px;color:#999;margin-top:3px}
+
+/* ABOUT */
+.about-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:460px}
+.about-img-col{background:#f5f5f5;border-right:0.5px solid #e0e0e0;overflow:hidden}
+.about-img-col img{width:100%;height:100%;object-fit:cover;display:block}
+.about-txt{padding:3rem 2.5rem}
+.about-h{font-family:var(--serif);font-size:1.75rem;line-height:1.2;margin-bottom:1.25rem}
+.about-b{font-size:14px;color:#555;line-height:1.8;margin-bottom:0.9rem}
+.srow{display:flex;align-items:center;gap:8px;margin-top:1.25rem;padding:0.9rem 1rem;background:#f5f5f5;border:0.5px solid #e0e0e0;text-decoration:none}
+.srow i{font-size:16px;color:var(--accent)}
+.srow div p:first-child{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#999;margin-bottom:2px}
+.srow div p:last-child{font-size:13px;color:#111}
+.svcs{margin-top:1.5rem;border-top:0.5px solid #e0e0e0;padding-top:1.25rem}
+.svcs-lbl{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#999;margin-bottom:0.9rem}
+.svcs-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.svc{display:flex;align-items:center;gap:7px;font-size:13px;color:#555}
+.svc i{font-size:13px;color:var(--accent)}
+.vnote{margin-top:1.5rem;padding:0.9rem 1.1rem;background:#f5f5f5;border:0.5px solid #e0e0e0;border-left:2px solid var(--accent);font-size:13px;color:#555;line-height:1.7}
+
+/* CONTACT */
+.contact-wrap{display:grid;grid-template-columns:1fr 1fr}
+.cl{padding:3rem 2.5rem;border-right:0.5px solid #e0e0e0}
+.ch{font-family:var(--serif);font-size:1.9rem;line-height:1.2;margin-bottom:0.9rem}
+.ch em{font-style:italic;color:#555}
+.csub{font-size:14px;color:#555;line-height:1.75;margin-bottom:2rem}
+.cinfo{display:flex;flex-direction:column;gap:1.1rem}
+.crow{display:flex;align-items:flex-start;gap:0.9rem}
+.crow i{font-size:16px;color:#555;margin-top:2px}
+.clbl{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#999;margin-bottom:2px}
+.cval{font-size:14px;color:#111}.cval a{color:#111;text-decoration:none}.cval a:hover{color:var(--accent)}
+.vnote2{margin-top:1.75rem;padding:0.9rem 1.1rem;background:#f5f5f5;border:0.5px solid #e0e0e0;border-left:2px solid var(--accent);font-size:13px;color:#555;line-height:1.7}
+.cr{padding:3rem 2.5rem}
+.fg{margin-bottom:1.25rem}
+.fl{display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#555;margin-bottom:0.4rem}
+.fi,.fta{width:100%;padding:0.65rem 0;background:none;border:none;border-bottom:0.5px solid #e0e0e0;font-size:14px;color:#111;font-family:var(--sans);outline:none;transition:border-color 0.2s}
+.fi:focus,.fta:focus{border-bottom-color:#111}
+.fta{resize:vertical;min-height:85px}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.sbtn{padding:0.8rem 2rem;background:#111;color:#fff;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;cursor:pointer;border:none;font-family:var(--sans);margin-top:0.75rem;transition:opacity 0.2s}
+.sbtn:hover{opacity:0.8}
+.smsg{display:none;background:#f5f5f5;border:0.5px solid #e0e0e0;padding:1.1rem;font-size:14px;color:#111;margin-top:1rem}
+
+footer{border-top:0.5px solid #e0e0e0;padding:1.75rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.flogo{font-family:var(--serif);font-size:0.95rem;color:#555}
+.flinks{display:flex;gap:1.25rem;flex-wrap:wrap}
+.flinks a{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#999;cursor:pointer;text-decoration:none}
+.flinks a:hover{color:#555}
+.fcopy{font-size:11px;color:#999}
+
+/* MOBILE */
+@media(max-width:768px){
+  .home-hero{display:none}
+  .mobile-hero{display:block}
+  .masonry{columns:2;column-gap:6px}
+  .photo-card{margin-bottom:6px}
+  .photo-card:hover{transform:rotate(0deg) scale(1.04)!important;box-shadow:0 8px 24px rgba(0,0,0,0.35)}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:none}
+  .stat:nth-child(3),.stat:nth-child(4){border-top:0.5px solid #e0e0e0}
+  .stat{padding:1.1rem 1.25rem}
+  .cta-bar{flex-direction:column;gap:1rem;align-items:flex-start;padding:1.25rem}
+  .gal-section{padding:1.25rem}
+  .vid-grid{grid-template-columns:1fr}
+  .vid-section{padding:1.5rem 1.25rem}
+  .about-wrap{grid-template-columns:1fr}
+  .about-img-col{min-height:220px;border-right:none;border-bottom:0.5px solid #e0e0e0}
+  .about-txt{padding:1.75rem 1.25rem}
+  .contact-wrap{grid-template-columns:1fr}
+  .cl{border-right:none;border-bottom:0.5px solid #e0e0e0;padding:1.75rem 1.25rem}
+  .cr{padding:1.75rem 1.25rem}
+  .frow2{grid-template-columns:1fr}
+  nav{padding:0.75rem 1rem}
+  .nav-links{gap:0.6rem}
+  .nav-links a{font-size:10px;letter-spacing:0.04em}
+  .logo{font-size:0.95rem}
+  .lb-phone{width:320px;border-radius:40px}
+  .lb-prev{left:-44px}.lb-next{right:-44px}
+  footer{padding:1.25rem}
+}
+</style>
+</head>
+<body>
+
+<!-- IPHONE 17 PRO MAX LIGHTBOX -->
+<div class="lb" id="lb" onclick="closeLbBg(event)">
+  <div class="lb-wrap">
+    <button class="lb-close" onclick="closeLb()">✕</button>
+    <div class="lb-phone">
+      <div class="lb-island"></div>
+      <div class="lb-screen" id="lb-screen">
+        <img id="lb-img" src="" alt=""/>
+      </div>
+      <div class="lb-home-bar"><div class="lb-home-indicator"></div></div>
+    </div>
+    <button class="lb-prev lb-prev" onclick="lbNav(-1)">‹</button>
+    <button class="lb-next lb-next" onclick="lbNav(1)">›</button>
+    <div class="lb-counter" id="lb-counter"></div>
+  </div>
+</div>
+
+<nav>
+  <div class="logo">Artem <span>Nedzelskiy</span></div>
+  <ul class="nav-links">
+    <li><a onclick="go('home')" class="active" id="nav-home">Home</a></li>
+    <li><a onclick="go('gallery')" id="nav-gallery">Gallery</a></li>
+    <li><a onclick="go('video')" id="nav-video">Video</a></li>
+    <li><a onclick="go('about')" id="nav-about">About</a></li>
+    <li><a onclick="go('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="active">
+  <!-- DESKTOP -->
+  <div class="home-hero">
+    <div class="hero-bg"><img src="https://drive.google.com/thumbnail?id=1O0qrSuQ32yR1499mnOZAZXdkwp2xCD75&sz=w1400" alt=""/></div>
+    <div class="hero-text-over">
+      <p class="kicker">Seattle area · Washington State</p>
+      <h1 class="hero-hl">Intensity, emotion &amp; <em>defining moments</em></h1>
+      <p class="hero-sub">Soccer specialist. Multi-sport. Photography &amp; video for clubs, leagues, and events.</p>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+        <button class="btn" onclick="go('gallery')">View gallery</button>
+        <button class="btn btn-outline" onclick="go('contact')">Contact</button>
+      </div>
+    </div>
+    <div class="hero-thumbs" id="hero-thumbs-desk"></div>
+  </div>
+  <!-- MOBILE -->
+  <div class="mobile-hero">
+    <div class="mobile-hero-img"><img src="https://drive.google.com/thumbnail?id=1O0qrSuQ32yR1499mnOZAZXdkwp2xCD75&sz=w800" alt=""/></div>
+    <div class="mobile-hero-text">
+      <p class="kicker">Seattle area · Washington State</p>
+      <h1 class="hero-hl" style="font-size:1.9rem;margin-bottom:0.75rem">Intensity, emotion &amp; <em>defining moments</em></h1>
+      <p class="hero-sub" style="font-size:13px;margin-bottom:1.25rem">Soccer specialist. Multi-sport. Photography &amp; video.</p>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="btn" onclick="go('gallery')">View gallery</button>
+        <button class="btn btn-outline" onclick="go('contact')">Contact</button>
+      </div>
+    </div>
+    <div class="mobile-thumbs" id="hero-thumbs-mob"></div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-n">3+</div><div class="stat-l">Years shooting</div></div>
+    <div class="stat"><div class="stat-n">12+</div><div class="stat-l">Sports covered</div></div>
+    <div class="stat"><div class="stat-n">Photo</div><div class="stat-l">&amp; Video</div></div>
+    <div class="stat"><div class="stat-n">WA</div><div class="stat-l">State-wide</div></div>
+  </div>
+  <div class="cta-bar">
+    <div class="cta-text"><p>Want to see more?</p><p>Browse the full portfolio or get in touch for bookings.</p></div>
+    <div class="cta-btns">
+      <button class="btn" onclick="go('gallery')">Full gallery</button>
+      <button class="btn btn-outline" onclick="go('contact')">Contact me</button>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="gal-section">
+    <div class="sec-hdr">
+      <h2 class="sec-ttl">Gallery</h2>
+      <span style="font-size:12px;color:#999">Hover to enlarge · Click to open</span>
+    </div>
+    <div class="masonry" id="masonry"></div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section id="video">
+  <div class="vid-section">
+    <div class="sec-hdr" style="margin-bottom:1.5rem"><h2 class="sec-ttl">Video</h2></div>
+    <div class="vid-grid">
+      <div class="vid-card">
+        <video class="vid-player" controls preload="metadata" playsinline>
+          <source src="https://drive.google.com/uc?export=download&id=1BC1iqp4eDG-SkC37O7aW1yeP58UwXcpq" type="video/mp4"/>
+        </video>
+        <div class="vid-meta">
+          <p class="vid-type">Sports highlight</p>
+          <p class="vid-title">Match highlight reel</p>
+          <p class="vid-note"><a href="https://drive.google.com/file/d/1BC1iqp4eDG-SkC37O7aW1yeP58UwXcpq/view" target="_blank" rel="noopener" style="color:#C0392B">Open in Drive ↗</a></p>
+        </div>
+      </div>
+      <div class="vid-card">
+        <video class="vid-player" controls preload="metadata" playsinline>
+          <source src="https://drive.google.com/uc?export=download&id=1R9XzFfxGgrwf1mYW6C3oY3Fr30mdJ32I" type="video/mp4"/>
+        </video>
+        <div class="vid-meta">
+          <p class="vid-type">FC Caliber</p>
+          <p class="vid-title">Caliber — match coverage</p>
+          <p class="vid-note"><a href="https://drive.google.com/file/d/1R9XzFfxGgrwf1mYW6C3oY3Fr30mdJ32I/view" target="_blank" rel="noopener" style="color:#C0392B">Open in Drive ↗</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="about-wrap" style="display:grid">
+  <div class="about-img-col"><img src="https://drive.google.com/thumbnail?id=11NNhAxJKCxLDSk5F5s2NuNWlQs5H4xAm&sz=w800" alt="Artem Nedzelskiy"/></div>
+  <div class="about-txt">
+    <p class="kicker">About Artem</p>
+    <h2 class="about-h">Sports photographer &amp; videographer, Seattle area</h2>
+    <p class="about-b">For the past three years I have been photographing and filming a variety of sports, with a primary focus on soccer. My goal is to capture the intensity, emotion, and key moments that define every game.</p>
+    <p class="about-b">Based in the Seattle area and available throughout Washington State. Travel outside of Washington is also available for an additional fee.</p>
+    <p class="about-b">I also have experience managing and creating content for sports-focused social media accounts — helping teams build their presence and tell their story online.</p>
+    <a class="srow" href="https://www.instagram.com/artem.ned" target="_blank" rel="noopener">
+      <i class="ti ti-brand-instagram"></i><div><p>Follow on Instagram</p><p>@artem.ned</p></div>
+    </a>
+    <div class="svcs">
+      <p class="svcs-lbl">Services</p>
+      <div class="svcs-grid">
+        <div class="svc"><i class="ti ti-camera"></i><span>Game &amp; match photography</span></div>
+        <div class="svc"><i class="ti ti-video"></i><span>Video &amp; highlight reels</span></div>
+        <div class="svc"><i class="ti ti-users"></i><span>Team &amp; player portraits</span></div>
+        <div class="svc"><i class="ti ti-trophy"></i><span>Tournament coverage</span></div>
+        <div class="svc"><i class="ti ti-brand-instagram"></i><span>Social media content</span></div>
+        <div class="svc"><i class="ti ti-heart"></i><span>Volunteer opportunities</span></div>
+      </div>
+    </div>
+    <div class="vnote"><i class="ti ti-heart" style="font-size:13px;color:#C0392B;margin-right:5px"></i>Also available for <strong>volunteer opportunities</strong> supporting local teams, leagues, and community events.</div>
+    <button class="btn" style="margin-top:1.75rem" onclick="go('contact')">Work together →</button>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-wrap" style="display:grid">
+  <div class="cl">
+    <p class="kicker">Get in touch</p>
+    <h2 class="ch">Let's capture<br><em>great moments</em><br>together</h2>
+    <p class="csub">Available for clubs, leagues, tournaments, video production, and social media content. Travel outside Washington State available for an additional fee.</p>
+    <div class="cinfo">
+      <div class="crow"><i class="ti ti-user"></i><div><p class="clbl">Photographer &amp; videographer</p><p class="cval">Artem Nedzelskiy</p></div></div>
+      <div class="crow"><i class="ti ti-mail"></i><div><p class="clbl">Email</p><p class="cval"><a href="mailto:Artkingunit@gmail.com">Artkingunit@gmail.com</a></p></div></div>
+      <div class="crow"><i class="ti ti-phone"></i><div><p class="clbl">Phone</p><p class="cval"><a href="tel:2536007251">(253) 600-7251</a></p></div></div>
+      <div class="crow"><i class="ti ti-map-pin"></i><div><p class="clbl">Location</p><p class="cval">Seattle area — available WA statewide</p></div></div>
+      <div class="crow"><i class="ti ti-brand-instagram"></i><div><p class="clbl">Instagram</p><p class="cval"><a href="https://www.instagram.com/artem.ned" target="_blank" rel="noopener">@artem.ned</a></p></div></div>
+    </div>
+    <div class="vnote2"><i class="ti ti-heart" style="font-size:13px;color:#C0392B;margin-right:5px"></i>Also available for <strong>volunteer opportunities</strong> supporting local teams, leagues, and community sports events.</div>
+  </div>
+  <div class="cr">
+    <div id="cform">
+      <div class="frow2">
+        <div class="fg"><label class="fl">First name</label><input class="fi" type="text" id="fn" placeholder="Alex"/></div>
+        <div class="fg"><label class="fl">Last name</label><input class="fi" type="text" id="ln" placeholder="Johnson"/></div>
+      </div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="em" placeholder="alex@example.com"/></div>
+      <div class="fg"><label class="fl">Subject</label><input class="fi" type="text" id="su" placeholder="Match photography — soccer tournament"/></div>
+      <div class="fg"><label class="fl">Message</label><textarea class="fta" id="msg" placeholder="Tell me about the event, date, location..."></textarea></div>
+      <button class="sbtn" onclick="submitForm()">Send message</button>
+    </div>
+    <div class="smsg" id="smsg"><i class="ti ti-circle-check" style="color:#27ae60;margin-right:6px"></i>Thanks! Artem will get back to you soon.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="flogo">Artem Nedzelskiy — Sports Photography &amp; Video</div>
+  <div class="flinks">
+    <a onclick="go('gallery')">Gallery</a>
+    <a onclick="go('video')">Video</a>
+    <a onclick="go('about')">About</a>
+    <a onclick="go('contact')">Contact</a>
+  </div>
+  <p class="fcopy">© 2026 Artem Nedzelskiy. All rights reserved.</p>
+</footer>
+
+<script>
+function gdImg(id,sz){return'https://drive.google.com/thumbnail?id='+id+'&sz=w'+(sz||600)}
+
+var maineIds=['11RjGQOXNnMYqtyIvtuCIV-e6gTjfIL9a','1nJyyJHIihPX3iIPMuxVH7VOyCYpRz_VB','155ikOOuoPcHIi5LJo2BRffvaYOKFEFuf','1mqic4cG02KF2HMEEuW7REp155X2wGcmU','1O0qrSuQ32yR1499mnOZAZXdkwp2xCD75','1ZXLYLuAyclVD9OsoyXJBGUP00smulfcv','16oIgoKUR0z7CjUudNWuKqEwzMmFNTdOU','1FQYYXuCUMxTKc9UuumE1V_8tx9VAykwt','16b00QZHzrTMIznf0UQy7wQRo8ErCwdp_','1BJqHdKKGqM_sJiR8M5QlP2dezjeZmn-P','165X3MVqP_dNaqdw2BMiVchLgIhncFNdU','13Chfpgomxegl5JrDzUT4eZMn1YNXEpyQ','1sbtdEf1KEtWrqaTDp6FDbdUkHF-at_dz','1lt1-6Irp7E34iPOW7D7_pYX5lGw3fO-J','1QcJQWMdp3H5BvcgFOY0KP2bLsE5_AITi'];
+var gameIds=['1kSDkuExHI5ItzirNTKoQn6PvCCAHfSNP','1a_Ef-yV72VFT9M15y7_9fEJzLWN8ctFZ','1YviqCgRlCwcDzQ6nxYq6lBPSSSLQXcYi','1gzLg0DCu58HSMxv02E86AdlUa59ccllE','1P3TatteJV88146B_YZdvWZpxl_Ui0mWM','1Ghj1ppQOSdUVet9rgpw7nOvFWL21TP64','1p9g9eqMGvDTRrI5sczLXz4ihy0yfJLWQ','1YP8-TP8gwDaavQTsbsAsz5SADH_bhAPx','1E4wqEmw1zMYPyq8hjosO5E80QHkivmad','1efaonrL_Pd5z6SoQL-q9bP3fY6MyuKVk','1srm4XFyJNllQo2FLILUhxij8-BMqsNpK','1iP9UcdTZ1Hp6QBlkt8g9o2ryyFIZmgNK','1PsIKgrGHxyvYSzGEoqoE5rAINKsei9qt','1zoZkBF6bcvZsOroJ9KV4g-P1I7wC-9Oh','1LKxHKSfS52qeVYn2Svp8DmlYdHm7A7lc','19qmPPVP78UNYcSP2keLTOkaMTyIwAD3I','1RCIKxgukmsI8dcJBuk5o-p4lSpR36U8c','1wm7hdPFO2ZTLD0Ac_lKJtIxIMztB4E25','1L7pV8JsCaFYKc3jr_lGtpqWT7PO9arlN','19TikCPgyEHpZkpxFEmqoKkIPOyjFE6K6','14snGSz65-1cIpqcaiMTmP_FKZdxlKIpQ','1mSzpKagzKO7IFCkcjfDHHrnmRvpmKMrA','1x5dQp9tBlNS4s88jvT3GHxn3zG6RCBJ5','1XMyATpLqwz1PLfn8ef99AxFQrTadOTSN','1uMqm4JMxEOkBmCqr1ZKTEMZhd6JR2y2I','1YYBDyDIhkzaFwjWzl8FQ9w0Dpbpqk-7i','1t0Hyp9DPD_mtE6vYByTa6wXyvq5qzY9p','1hwHPfvr8nrrOvdTlbz0VmIdpmM6OA0Py','1p_tlSOoaSIKtw0AywUg3hfYscA4Z4wLl'];
+var portIds=['11NNhAxJKCxLDSk5F5s2NuNWlQs5H4xAm','1qmVCnuH_9j6Q9_8tCxQToqAaPSVxIGne','1gP_gwMddlUsoU4EuhDr9ngCZO0ni8cgU','1VqDRQsySpVSFHPhkII9Rtgqry4zU3PjB','1hLkZEe6z71rbXIxV4iRtYuPOapSlTf4L','12Pwr6GorhqCs1wayaEA3uMkjyl8g7goi','1gG7_kCo_x406pDoA1B3cZrwjVMgFxHMv','1_n16-J7YnEVmrJ81ePi18NTn0W6BFRkT','1I2sbUtnwFsDVZAvQ7qTRTOgksjzFzI9Z','1oCJ9cpVHb4eKNP44GCH7nGsgfEVqgjJ0','19uQAzs_OK3SKKfqUqIdkU70uEqrigOxE','1W8_2X32g1rS2h6kvAVI022q7KEHlhU0i','1EOppf6UkRKPh9vOflagXw1cxkGw3qSN2','1NabEPsL-VDEuuxwjR5kH34BHKAFoTbaR','1c_6Dvftn4i-4hEBHCHKfZJmLtwpswWjn','1q6DP_Ya_9bOX-PZ1-fy10MIpi0V360iJ','1uUFLpx4S_WGQt8FXftJTYtNhoqyjamGN','1P56eaBXoYn3e3Xb1WWto6PJDV1xsEdcj','1_0_o7j7_UPTs5LR0xNDbv43td514OBUJ','1_PeyY8Ge_SlFpx1WFky9KMAis9Tzx8Mz','1tThNkFOWqpCUjEzsX-3IQ6SJr0h28F7N','17CSHVwEx8CYQxqMV-by-Z3Tq2WK9lR-0','10jstga3y2X0cUZ3iCgf94yfuHPfy39uM','1xvJRf_UqkHTmiH95gHjbS-_edSqCDXhX','1ZlI0msJww4loAxlbBMS6D7jFzehERMCI'];
+
+function shuffle(a){var r=a.slice();for(var i=r.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=r[i];r[i]=r[j];r[j]=t;}return r;}
+var allIds=shuffle(maineIds.concat(gameIds).concat(portIds));
+var thumbPool=shuffle(allIds.slice());
+
+/* ANIMATED THUMBS */
+function buildThumbs(containerId,cells,cols){
+  var el=document.getElementById(containerId);
+  if(!el)return;
+  el.style.gridTemplateColumns='repeat('+cols+',1fr)';
+  var arr=[];
+  for(var c=0;c<cells;c++){
+    var div=document.createElement('div');
+    div.style.cssText='position:relative;overflow:hidden;background:#222';
+    var a=document.createElement('img');a.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease-in-out';
+    var b=document.createElement('img');b.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease-in-out';
+    a.src=gdImg(thumbPool[c%thumbPool.length],300);a.style.opacity='1';
+    b.src=gdImg(thumbPool[(c+cells)%thumbPool.length],300);
+    div.appendChild(a);div.appendChild(b);el.appendChild(div);
+    arr.push({imgs:[a,b],cur:0,ptr:c});
+  }
+  arr.forEach(function(cell,i){
+    setTimeout(function(){
+      setInterval(function(){
+        var next=(cell.cur+1)%2;
+        cell.imgs[cell.cur].style.opacity='0';
+        cell.ptr=(cell.ptr+cells)%thumbPool.length;
+        cell.imgs[next].src=gdImg(thumbPool[cell.ptr],300);
+        cell.imgs[next].style.opacity='1';
+        cell.cur=next;
+      },3000);
+    },i*300);
+  });
+}
+buildThumbs('hero-thumbs-desk',10,5);
+buildThumbs('hero-thumbs-mob',6,3);
+
+/* GALLERY — masonry, natural ratios, scattered with tilts */
+var grid=document.getElementById('masonry');
+var COLS=4;
+allIds.forEach(function(id,i){
+  var card=document.createElement('div');
+  card.className='photo-card';
+  // edge-aware transform origin
+  var col=i%COLS;
+  if(col===0)card.classList.add('el');
+  if(col===COLS-1)card.classList.add('er');
+  if(i<COLS)card.classList.add('et');
+
+  var img=document.createElement('img');
+  img.loading='lazy';
+  img.alt='Photo '+(i+1);
+  img.src=gdImg(id,400);
+  // natural size — no forced aspect ratio
+
+  var ov=document.createElement('div');
+  ov.className='photo-ov';
+  ov.innerHTML='<i class="ti ti-zoom-in" aria-hidden="true"></i>';
+
+  card.appendChild(img);
+  card.appendChild(ov);
+  (function(idx){card.onclick=function(){openLb(idx);};})(i);
+  grid.appendChild(card);
+});
+
+/* LIGHTBOX */
+var lbIdx=0;
+function openLb(idx){
+  lbIdx=idx;loadLbPhoto();
+  document.getElementById('lb').classList.add('open');
+}
+function loadLbPhoto(){
+  var img=document.getElementById('lb-img');
+  var screen=document.getElementById('lb-screen');
+  img.src=gdImg(allIds[lbIdx],800);
+  screen.className='lb-screen';
+  img.onload=function(){
+    var p=img.naturalHeight>img.naturalWidth;
+    screen.className='lb-screen '+(p?'portrait':'landscape');
+  };
+  document.getElementById('lb-counter').textContent=(lbIdx+1)+' / '+allIds.length;
+}
+function closeLb(){document.getElementById('lb').classList.remove('open');}
+function closeLbBg(e){if(e.target===document.getElementById('lb'))closeLb();}
+function lbNav(d){lbIdx=(lbIdx+d+allIds.length)%allIds.length;loadLbPhoto();}
+document.addEventListener('keydown',function(e){
+  if(!document.getElementById('lb').classList.contains('open'))return;
+  if(e.key==='ArrowRight')lbNav(1);
+  if(e.key==='ArrowLeft')lbNav(-1);
+  if(e.key==='Escape')closeLb();
+});
+
+/* NAV */
+function go(id){
+  var ss=document.querySelectorAll('section');for(var i=0;i<ss.length;i++)ss[i].classList.remove('active');
+  var ls=document.querySelectorAll('.nav-links a');for(var i=0;i<ls.length;i++)ls[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function submitForm(){
+  if(!document.getElementById('fn').value||!document.getElementById('em').value){alert('Please fill in your name and email.');return;}
+  document.getElementById('cform').style.display='none';
+  document.getElementById('smsg').style.display='block';
+}
+</script>
+</body>
+</html>
